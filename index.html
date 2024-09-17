@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App </title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="enter city name" spellcheck="false">
+            <button><img src="images /search.png"></button>
+        </div>
+        <div class="error">
+            <p> Invalid city name</p>
+        </div>
+        <div class="weather">
+            <img src="images /rain.png" class="weather-icon">
+            <h1 class="temp">22°C</h1>
+            <h2 class="city "> New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images /humidity.png" >
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images /wind.png" >
+                    <div>
+                        <p class="wind">15km/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ <script>
+
+   const apikey = "4a4d4d41e37239b6abe1375d4e295a1f";
+   const apiurl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+   const searchBox = document.querySelector(".search input")
+   const searchBtn = document.querySelector(".search button")
+   const weatherIcon =document.querySelector(".weather-icon")
+
+   async function checkweather(city){
+    const response = await fetch(apiurl + city + `&appid=${apikey}`);
+  // ---------FOR ERROR MESSAGE--------------------
+  
+    if(response.status==404){
+    document.querySelector(".error").style.display="block";
+    document.querySelector(".weather").style.display="none";
+}else{
+    var data = await response.json();
+
+    // An async function in JavaScript allows you to write code that waits for a task to complete (like fetching data from an API) without freezing the rest of the code. 
+    // It lets you handle tasks that take time
+    //async marks a function that will handle tasks that take time.
+    //Inside an async function, await is used to pause the code until a task is done (like waiting for data to be fetched).
+    //While waiting, the rest of the program can still run. Once the task is done, the code continues.
+//await fetch(...) tells the code to wait until the weather data is fetched from the API.
+//Once the data is fetched, it converts the response to JSON using response.json() and logs it to the console.
+   
+   document.querySelector(".city").innerHTML = data.name ;
+   document.querySelector(".temp").innerHTML = Math.round(data.main.temp)+ "°C";//math.round rounds of the data
+   document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+   document.querySelector(".wind").innerHTML = data.wind.speed+ "km/hr";
+
+//If you fetched the weather data for "Bangalore," the following would happen:
+//The API would return a JSON response containing the city's name.
+//data.name would contain the string "Bangalore".
+//The code document.querySelector(".city").innerHTML = data.name; would update the content of the <h2 class="city"> element to display "Bangalore" instead of "New York".
+ 
+ 
+ //----------------- for updating photos according to different conditions----------
+ 
+if(data.weather[0].main =="Clouds"){
+    weatherIcon.src ="images /clouds.png";
+}
+else if(data.weather[0].main == "Clear"){
+weatherIcon.src ="images /clear.png";
+}
+else if(data.weather[0].main == "Rain"){
+weatherIcon.src ="images /rain.png";
+}
+else if(data.weather[0].main == "Drizzle"){
+weatherIcon.src ="images /drizzle.png";
+}
+else if(data.weather[0].main == "Mist"){
+weatherIcon.src ="images /mist.png";
+}
+document.querySelector(".weather").style.display="block";
+document.querySelector(".error").style.display="none";
+   }
+}
+
+searchBtn.addEventListener("click", ()=>{
+   checkweather(searchBox.value); // whenever the webpage will be laoded it will call this function
+})
+ </script>
+    
+</body>
+</html>
